@@ -20,3 +20,5 @@ spec:
   dependsOn:
     - provider: xpkg.upbound.io/upbound/provider-aws
       version: ">=v0.31.0"
+    - provider: xpkg.upbound.io/upbound/provider-dummy
+      version: "v0.1.0"
