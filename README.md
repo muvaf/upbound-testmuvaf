@@ -1,30 +1,30 @@
-# Crossplane configuration for "EKS as a Service"
+# Dummy Crossplane configuration
 
-This repository contains the definition for a [Crossplane configuration](https://docs.crossplane.io/v1.11/concepts/packages/#configuration-packages) that bundles a set of API definitions. This configuration is a starting point for new users who are creating their first control plane in [Upbound](https://cloud.upbound.io).
+This repository defines a [Crossplane
+configuration](https://docs.crossplane.io/v1.11/concepts/packages/#configuration-packages)
+that depends on only `provider-dummy` which includes a dummy external API for
+contained experimentation with the least amount of setup - such as requiring no
+credentials.
 
-When this configuration is installed on a control plane, the control plane will have APIs to provision fully configured Amazon Elastic Kubernetes Service (EKS) clusters with secure networking, composed using cloud service primitives from the [Upbound Official AWS Provider](https://marketplace.upbound.io/providers/upbound/provider-aws). App deployments can securely connect to the infrastructure they need using secrets distributed directly to the app namespace.
+This repository is only intended for learning and experimentation. The APIs may
+have breaking changes any time.
 
 ## What's Inside
 
-A custom API in [Crossplane](https://docs.crossplane.io/v1.11/getting-started/introduction/) is defined by:
+* [`crossplane.yaml`](./crossplane.yaml): The definition file for a configuration.
+* [`apis`](./apis): The `CompositeResourceDefinition` and `Composition`
+  resources that make up APIs.
+* [`examples`](./examples/): Example YAMLs for the defined APIs.
 
-- a CompositeResourceDefinition (XRD). This defines the schema or shape of the API.
-- A Composition(s). Compositions implement the schema by _composing_ a set of Crossplane managed resources together.
+## Getting Started
 
-For this configuration, the EKS API is defined by:
-
-- a [KubernetesCluster](/apis/definition.yaml) type
-- the KubernetesCluster is composed of an [XNetwork](/apis/network/definition.yaml) and [XEKS](/apis/eks/definition.yaml) types.
-- the XNetwork is [composed](/apis/network/composition.yaml) of a the following resources: a VPC, InternetGateway, 4 Subnets, a RouteTable, Routes, 5 RouteTableAssociations, a SecurityGroup, and 2 security group role.
-- the XEKS is [composed](/apis/eks/composition.yaml) of the following resources: Cluster, a NodeGroup, an OpenIDConnectProvider, 2 Roles, 4 RolePolicyAttachments, and ClusterAuth.
-
-This repository also contains an [example claim](/.up/examples/cluster.yaml). You can apply this file on your control plane to invoke the EKS API and cause a cluster to be created.
-
-## Next Steps
-
-This repository is a starting point. You should be feel encouraged to:
-
-1) create new API definitions in this same repo
-2) tweak the existing API definition for EKS to your needs
-
-Upbound will automatically detect the commits you make in your repo and build the configuration package for you. To learn more about how to build APIs for your managed control planes in Upbound, read the guide on [Upbound's docs](https://docs.upbound.io).
+1. In Upbound Console, create a control plane that depends on a configuration
+   repository forked from this one.
+2. Deploy the external server of the `provider-dummy` somewhere that is publicly
+   exposed. See example deployment [here](https://github.com/upbound/provider-dummy/blob/main/cluster/server-deployment.yaml).
+   * You can also install the provider to Upbound in no-op mode and deploy
+     controller and server somewhere else together by following the instructions
+     [here](https://github.com/upbound/provider-dummy#no-op-mode).
+3. Create a `ProviderConfig` for `provider-dummy` with the endpoint of the
+   server.
+4. Create your first resource from [`examples`](./examples/) folder!
